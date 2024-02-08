@@ -1,0 +1,44 @@
+header{
+    height: 80px;
+    background-color: #425F57;
+    // background: var(255,255,255,0.5);
+    padding: 25px 0px;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    backdrop-filter: blur(20px);
+    .header_container{
+        max-width: 1140px;
+        margin: auto;
+        .header_content{
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            .header_logo{
+                a{
+
+                }
+            }
+            nav{
+                ul{
+                    display: flex;
+                    align-items: center;
+                    gap: 30px;
+                    li{
+                        a{
+
+                        }
+                    }
+                }
+            }
+            button{
+                display: none;
+                i{
+
+                }
+            }
+        }
+    }
+}
