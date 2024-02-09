@@ -11,6 +11,9 @@ import Register from './pages/Register/index.jsx'
 import Login from './pages/Login/index.jsx'
 import Authors from './pages/Authors/index.jsx'
 import UserProfile from './pages/UserProfile/index.jsx'
+import MyPost from './pages/MyPost/index.jsx'
+import CreatePost from './pages/CreatePost/index.jsx'
+import EditPost from './pages/EditPost/index.jsx'
 const router=createBrowserRouter([
   {
     path:"/",
@@ -22,7 +25,11 @@ const router=createBrowserRouter([
       {path:"/register",element:<Register/>},
       {path:"/login",element:<Login/>},
       {path:"/authors",element:<Authors/>},
-      {path:"/userProfile",element:<UserProfile/>}
+      {path:"/userProfile",element:<UserProfile/>},
+      {path:"/myPost",element:<MyPost/>},
+      {path:"/createPost",element:<CreatePost/>},
+      {path:"/editPost",element:<EditPost/>}
+
     ]
   }
 ])
