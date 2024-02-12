@@ -2,6 +2,11 @@ import { HttpError } from "../Model/ErrorModel.js"
 import { UsersModel } from "../Model/UserModel.js"
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+// import fs from "fs";
+// import path from "path";
+// import { randomUUID } from "crypto";
+// import { uuid } from "uuid";
+
 
 export const registerUser = async (req, res, next) => {
     try {
@@ -22,7 +27,7 @@ export const registerUser = async (req, res, next) => {
         }
         const salt = await bcrypt.genSalt(10)
         const hash = await bcrypt.hash(password, salt)
-        const newUser = await UsersModel.create({ name, email: newEmail, password: hash })
+        const newUser = await UsersModel.create({ name, email: newEmail, password: hash})
         res.status(201).json(`New User ${newUser.email} resgistered`)
     } catch (error) {
         return next(new HttpError("User registration failed", 422))
@@ -66,19 +71,72 @@ export const getUser = async (req, res, next) => {
     }
 }
 
+
 export const changePhotoUser = async (req, res, next) => {
-    try {
-        res.json(req.files)
-        
-    } catch (error) {
-        return next(new HttpError(error))
-    }
-    res.json("User User Photo")
+    // try {
+    //     if (!req.files.avatar) {
+    //         return next(new HttpError("Please choose an image", 422))
+    //     }
+    //     const user = await UsersModel.findById(req.user.id)
+    //     if (user.avatar) {
+    //         fs.unlink(path.join(__dirname, "..", 'uploads', user.avatar), (err) => {
+    //             if (err) {
+    //                 return next(new HttpError(err))
+    //             }
+    //         })
+    //     }
+
+    //     const { avatar } = req.files
+    //     if (avatar.size > 500000) {
+    //         return next(new HttpError("Profile picture too big.Should be less than 500kb"))
+    //     }
+
+    //     let fileName;
+    //     fileName = avatar.name
+    //     let splittedFilename = fileName.split(".")
+    //     let newFilename = splittedFilename[0] + uuid() + "." + splittedFilename[splittedFilename.length - 1]
+    //     avatar.mv(path.join(__dirname, "..", 'uploads', newFilename), (err) => {
+    //         if (err) {
+    //             return next(new HttpError(err))
+    //         }
+    //         const updatedAvatar = await UsersModel.findByIdAndUpdate(req.user.id, { avatar: newFilename })
+    //     })
+    // } catch (error) {
+    //     return next(new HttpError(error))
+    // }
 }
 
 
 export const editUser = async (req, res, next) => {
-    res.json("Edit User Profile")
+    try {
+        const { id } = req.params
+        const { name, email, currentPassword, newPassword, confirmPassword, image } = req.body
+        if (!name || !email || !currentPassword || !newPassword) {
+            return next(new HttpError("Fill in all fields", 422))
+        }
+        const user = await UsersModel.findById(id)
+        if (!user) {
+            return next(new HttpError("User not Found", 403))
+        }
+        const emailExists = await UsersModel.findOne({ email })
+        if (!emailExists && (emailExists._id != id)) {
+            return next(new HttpError("Email already exist", 422))
+        }
+        const validateUserPassword = await bcrypt.compare(currentPassword, user.password)
+        if (!validateUserPassword) {
+            return next(new HttpError("Invalid current password", 422))
+        }
+
+        if (newPassword !== confirmPassword) {
+            return next(new HttpError("New Passwords do not match", 422))
+        }
+        const salt = await bcrypt.genSalt(10)
+        const hash = await bcrypt.hash(newPassword, salt)
+        const newInfo = await UsersModel.findByIdAndUpdate(id, { name, email, password: hash, image: "http://localhost:3500/assets/" + req.photo }, { new: true })
+        req.status(200).json(newInfo)
+    } catch (error) {
+        return next(new HttpError(error))
+    }
 }
 
 export const getAuthors = async (req, res, next) => {

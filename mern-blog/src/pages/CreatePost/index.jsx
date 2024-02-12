@@ -7,7 +7,7 @@ const CreatePost = () => {
         toolbar: [
             [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
             ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-            [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1' }, {'indent': '+1' }],
+            [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }],
             ['link', 'image'],
             ['clean']
         ]
@@ -23,7 +23,19 @@ const CreatePost = () => {
     const [title, setTitle] = useState('')
     const [category, setCategory] = useState('Uncategorized')
     const [description, setDescription] = useState('')
-    const [thumbnail, setThumbnail] = useState('')
+    const [image, setImage] = useState('')
+    function handleSubmit(e) {
+        e.preventDefault()
+        const formData = new FormData()
+        formData.append("title", title)
+        formData.append("category", category)
+        formData.append("description", description)
+        formData.append("image", image)
+        fetch("http://localhost:3500/posts", {
+            method: "POST",
+            body: formData
+        })
+    }
     return (
         <>
             <section id='createPost'>
@@ -31,7 +43,7 @@ const CreatePost = () => {
                     <div className='create_post_content'>
                         <h2>Create Post</h2>
                         <p className='form_error_message'>This error message</p>
-                        <form action="">
+                        <form action="" onSubmit={handleSubmit}>
                             <input type="text" placeholder='Title' value={title} onChange={e => setTitle(e.target.value)} />
                             <select name="category" value={category} onChange={e => setCategory(e.target.value)} id="">
                                 <option value="">Uncategorized</option>
@@ -41,8 +53,8 @@ const CreatePost = () => {
                                 <option value="">Art</option>
 
                             </select>
-                            <ReactQuill modules={modules} formats={formats} value={description} onChange={setDescription} />
-                            <input type="file" onChange={e => setThumbnail(e.target.files[0])} accept='png,jpg,jpeg' />
+                            <ReactQuill modules={modules} formats={formats} value={description} onChange={e => setDescription(e.target.value)} />
+                            <input type="file" onChange={e => setImage(e.target.files[0])} accept='png,jpg,jpeg' />
                             <button type='submit' className='create_btn'>Create</button>
                         </form>
                     </div>
